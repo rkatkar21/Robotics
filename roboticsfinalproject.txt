@@ -1,0 +1,64 @@
+import easygopigo3 as easy
+import time
+robot = easy.EasyGoPiGo3()
+distance_sensor = robot.init_distance_sensor()
+buzzer = robot.init_buzzer()
+# code that drives forward until obstacle detected
+
+def beep(duration=1):
+    buzzer.sound(440)
+    time.sleep(2)
+    buzzer.sound_off()
+
+def turn_right(d=1):
+    robot.right()
+    time.sleep(d)
+    robot.stop()
+
+def turn_left(d=1): 
+    robot.left()
+    time.sleep(d)
+    robot.stop()
+
+def drive_until_obstacle(spacing=180, beep=False):
+    """
+    spacing: threshold 
+    beep: if true, robot will beep at obstacle after stopping
+    """
+    robot.forward()
+    while True: 
+        distance_to_obstacle = distance_sensor.read_mm()
+#         print(f'Distance sensor (cm): {distance_to_obstacle}')
+        if distance_to_obstacle <= spacing: 
+            robot.stop()
+            print("detected an obstacle. Stopped")
+            return
+
+drive_until_obstacle()
+turn_right()
+robot.drive_cm(50)
+turn_left()
+time.sleep(1)
+turn_right(d=1.1)
+drive_until_obstacle()
+turn_right()
+
+drive_until_obstacle(spacing=300)
+turn_left()
+drive_until_obstacle()
+turn_left()
+
+# checkpoint
+drive_until_obstacle()
+turn_left()
+
+drive_until_obstacle()
+turn_right()
+
+drive_until_obstacle()
+turn_right(d=1.1)
+robot.drive_cm(50)
+turn_left()
+drive_until_obstacle()
+robot.drive_cm(30)
+robot.stop()
